@@ -10,7 +10,7 @@ const COOKIE_OPTIONS = {
 };
 
 export const signup = async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password } = req.body; 
 
   const existing = await User.findOne({ username });
   if (existing) {
