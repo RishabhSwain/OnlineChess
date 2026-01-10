@@ -1,9 +1,11 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
-import authRoutes from './routes/auth.routes.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+
+import authRoutes from './routes/auth.routes.js';
+import gameRoutes from './routes/game.routes.js';
 
 import http from 'http';
 import { Server } from 'socket.io';
@@ -37,6 +39,7 @@ dotenv.config();
 connectDB();
 
 app.use('/api/auth', authRoutes);
+app.use('/api/game', gameRoutes);
 
 const PORT = process.env.PORT || 5000;
 

@@ -35,7 +35,7 @@ export default function GameMenuPage() {
             </div>
 
             <div className="grid grid-cols-1 gap-4">
-              <MenuButton onClick={() => router.push("/menu/game")} icon={<Play size={20} />} label="Start Game" />
+              <MenuButton onClick={() => router.push("/menu/multiplayer/lobby")} icon={<Play size={20} />} label="Start Game" />
               <MenuButton icon={<Trophy size={20} />} label="Leaderboard" />
               <MenuButton icon={<Settings size={20} />} label="Settings" />
             </div>
