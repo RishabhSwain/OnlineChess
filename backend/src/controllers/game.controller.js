@@ -1,6 +1,12 @@
 import Game from "../models/Game.js";
 
-const rooms = {};
+
+
+import { games } from "../domain/gameManager.ts";
+
+import { createLocalGame } from "../domain/gameManager.ts";
+
+// const rooms = {};
 
 export const createRoom = async (req, res) => {
   const { userId } = req.body;
@@ -32,6 +38,8 @@ export const createRoom = async (req, res) => {
         if (err.code !== 11000) throw err; // duplicate key
       }
     }
+
+    createLocalGame(roomCode)
 
     res.status(201).json({ roomId: roomCode });
   } catch (err) {

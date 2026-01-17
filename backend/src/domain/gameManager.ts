@@ -1,13 +1,13 @@
 import { Socket, Server } from "socket.io"
 import { Chess } from "chess.js"
 
-const games = new Map<string, Chess>()
+export const games = new Map<string, Chess>()
 
-export function createGame(socket: Socket): string {
-  const gameId = crypto.randomUUID()
-  games.set(gameId, new Chess())
-  socket.join(gameId)
-  return gameId
+export function createLocalGame(roomCode: string): boolean {
+  
+  games.set(roomCode, new Chess())
+  
+  return true
 }
 
 export function joinGame(socket: Socket, gameId: string): boolean {
@@ -25,14 +25,22 @@ export function handleMove(
   const game = games.get(gameId)
   if (!game) return
 
+  try {
   const result = game.move(move)
-  if (!result) {
-    socket.emit("invalid-move")
-    return
-  }
 
   io.to(gameId).emit("game-state", {
     fen: game.fen(),
     lastMove: result
   })
+} catch (error) {
+  console.error("Error making move:", error)
+
+  socket.emit("invalid-move")
+  return
+}
+
+
+  
+
+  
 }

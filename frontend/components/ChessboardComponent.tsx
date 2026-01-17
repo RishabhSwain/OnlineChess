@@ -1,13 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Chessboard, PieceDropHandlerArgs } from "react-chessboard";
 import { chessGame } from "@/domain/chess/ChessLogic";
 
-export default function ChessboardComponent() {
+import { socket } from "@/lib/socket";
+
+export default function ChessboardComponent({ gameId }: { gameId: string }) {
   const [sourceSquare, setSourceSquare] = useState<string>("None");
   const [targetSquare, setTargetSquare] = useState<string>("None");
   
 
   const [position, setPosition] = useState(chessGame.getFen());
+
+  useEffect(() => {
+  const handleGameState = (data: { fen: string; lastMove: any }) => {
+    setPosition(data.fen);
+  };
+
+  const handleInvalidMove = () => {
+    alert("Invalid move!");
+  };
+
+  socket.on("game-state", handleGameState);
+  socket.on("invalid-move", handleInvalidMove);
+
+  return () => {
+    socket.off("game-state", handleGameState);
+    socket.off("invalid-move", handleInvalidMove);
+  };
+}, []);
+
 
   const onPieceDrop = ({
     sourceSquare,
@@ -16,14 +37,16 @@ export default function ChessboardComponent() {
   }: PieceDropHandlerArgs) => {
     setSourceSquare(sourceSquare);
     setTargetSquare(targetSquare || "None");
-    
 
-    const move = chessGame.makeMove(sourceSquare, targetSquare!);
-
-    if (move === null) return false;
-
-    setPosition(chessGame.getFen());
+    socket.emit("move", { gameId, move: { from: sourceSquare, to: targetSquare, promotion: "q" } });
     return true;
+
+    // const move = chessGame.makeMove(sourceSquare, targetSquare!);
+
+    // if (move === null) return false;
+
+    // setPosition(chessGame.getFen());
+    // return true;
   };
 
   const chessboardOptions = {

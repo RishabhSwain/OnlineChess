@@ -1,14 +1,11 @@
 import { Server, Socket } from "socket.io"
-import { createGame, joinGame, handleMove } from "./../domain/gameManager.ts"
+import {  joinGame, handleMove } from "./../domain/gameManager.ts"
 
 export function setupSocket(io: Server) {
   io.on("connection", (socket: Socket) => {
     console.log("Connected:", socket.id)
 
-    socket.on("create-game", () => {
-      const gameId = createGame(socket)
-      socket.emit("game-created", gameId)
-    })
+    socket.join("global")
 
     socket.on("join-game", (gameId: string) => {
       const success = joinGame(socket, gameId)

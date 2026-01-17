@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import api from "@/lib/axios";
 import { useAuth } from "@/context/AuthContext";
 import { useParams, useRouter } from "next/navigation";
+
+import {socket} from "@/lib/socket";
 
 import ChessboardComponent from "@/components/ChessboardComponent";
 
@@ -41,10 +43,16 @@ export default function Game() {
 
   }, [roomId]);
 
+  useEffect(() => {
+    socket.emit("join-game", roomId);
+  }, [roomId]);
+
   if (roomExists === null) return <p className="text-white">Loading...</p>;
   if (!roomExists) return <p className="text-red-500">Room not found!</p>;
 
   if (loading) return null;
+
+  const gameId = roomId?.toString() || "";
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white p-6">
@@ -61,7 +69,7 @@ export default function Game() {
       {/* Main */}
       <div className="container mx-auto flex flex-col md:flex-row">
         <div className="w-full md:w-1/3">Chat Section</div>
-        <div className="w-full md:w-2/3"><div className="m-auto" style={{width:600}}><ChessboardComponent /></div></div>
+        <div className="w-full md:w-2/3"><div className="m-auto" style={{width:600}}><ChessboardComponent gameId={gameId} /></div></div>
       </div>
       
     </div>
