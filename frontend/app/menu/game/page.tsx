@@ -98,7 +98,7 @@ export default function Game() {
       {/* Main */}
       <div className="container mx-auto flex flex-col md:flex-row">
         <div className="w-full md:w-1/3">Hello</div>
-        <div className="w-full md:w-2/3"><div className="m-auto" style={{width:600}}><ChessboardComponent /></div></div>
+        {/* <div className="w-full md:w-2/3"><div className="m-auto" style={{width:600}}><ChessboardComponent /></div></div> */}
       </div>
       
     </div>
