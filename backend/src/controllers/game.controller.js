@@ -1,6 +1,6 @@
 import Game from "../models/Game.js";
 
-
+import { Chess } from "chess.js";
 
 import { games } from "../domain/gameManager.ts";
 
@@ -29,9 +29,7 @@ export const createRoom = async (req, res) => {
             },
           ],
           state: {
-            board: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
-            turn: "white",
-            moveCount: 0,
+            fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
           },
         });
       } catch (err) {
@@ -39,12 +37,27 @@ export const createRoom = async (req, res) => {
       }
     }
 
-    createLocalGame(roomCode)
+    createLocalGame(roomCode);
 
     res.status(201).json({ roomId: roomCode });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to create room" });
+  }
+};
+
+export const getState = async (req, res) => {
+  const id = req.query.id;
+
+  const game = await Game.findOne({ roomCode: id });
+  if (game) {
+    res.json({
+      players: game.players,
+      state: game.state,
+      finished: game.finished,
+    });
+  } else {
+    res.status(404).json({ error: "Game not found" });
   }
 };
 
@@ -78,7 +91,7 @@ export const joinRoom = async (req, res) => {
               color: "black",
             },
           },
-        }
+        },
       );
       res.json({ success: true });
     } else {
@@ -86,5 +99,35 @@ export const joinRoom = async (req, res) => {
     }
   } else {
     return res.json({ success: false, message: "Room not found" });
+  }
+};
+
+export const makeMove = async (req, res) => {
+  const { roomId, move } = req.body;
+  
+  const game = await Game.findOne({ roomCode: roomId });
+  if (game) {
+    const curGame = new Chess(game.state.fen);
+
+    let result;
+    try {
+      result = curGame.move(move);
+    } catch (err) {
+      return res.json({ success: false, message: "Invalid move" });
+    }
+
+    if (result) {
+      await Game.updateOne(
+        { roomCode: roomId },
+        {
+          $set: { "state.fen": curGame.fen() }
+        },
+      );
+      res.json({ success: true });
+    } else {
+      res.json({ success: false, message: "Invalid move" });
+    }
+  } else {
+    res.status(404).json({ error: "Game not found" });
   }
 };

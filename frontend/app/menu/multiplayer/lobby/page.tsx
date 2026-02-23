@@ -10,6 +10,8 @@ import api from "@/lib/axios";
 
 import { useAuth } from "@/context/AuthContext"
 
+import { useGameStore } from "@/store/gameStore";
+
 export default function LobbyPage() {
   const router = useRouter();
 
@@ -17,21 +19,25 @@ export default function LobbyPage() {
 
   const [roomCode, setRoomCode] = useState("");
 
+  const ownColor = useGameStore((s) => s.ownColor);
+  const setOwnColor = useGameStore((s) => s.setOwnColor);
 
 
   const handleCreateRoom = async () => {
     const res = await api.post("/game/create", {userId: user?.username});
+    setOwnColor("white");
     router.push(`/menu/multiplayer/${res.data.roomId}`);
   };
 
   const handleJoinRoom = async () => {
     if (!roomCode.trim()) return;
-
+    
     const res = await api.post(`/game/join`, { userId: user?.username, roomId: roomCode.trim() });
     
 
 
     if (res.data.success) {
+      setOwnColor("black");
       router.push(`/menu/multiplayer/${roomCode.trim()}`);
     } else {
       alert(`${res.data.message}`);

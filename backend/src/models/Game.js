@@ -11,8 +11,8 @@ const playerSchema = new mongoose.Schema(
 
 const stateSchema = new mongoose.Schema(
   {
-    board: { type: String, required: true },
-    turn: { type: String, required: true },
+    fen: { type: String, required: true },
+    
   },
   { _id: false }
 );

@@ -8,10 +8,10 @@ export const socket: Socket = io(URL, {
 })
 
 socket.on("join-result", (success: boolean) => {
-    if (success) {
-        alert("Successfully joined the game!")
-    } else {
-        alert("Failed to join the game.")
-    }
+    // if (success) {
+    //     alert("Successfully joined the game!")
+    // } else {
+    //     alert("Failed to join the game.")
+    // }
 })
 
