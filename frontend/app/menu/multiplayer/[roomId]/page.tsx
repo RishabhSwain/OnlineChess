@@ -94,7 +94,7 @@ export default function Game() {
       {/* Main */}
       <div className="container mx-auto flex flex-col md:flex-row">
         <div className="w-full md:w-1/3">Chat Section</div>
-        <div className="w-full md:w-2/3"><div className="m-auto" style={{width:600}}><ChessboardComponent gameId={gameId} gameData={gameData} /></div></div>
+        <div className="w-full md:w-2/3"><div className="m-auto w-full lg:w-3/4"><ChessboardComponent gameId={gameId} gameData={gameData} /></div></div>
       </div>
       
     </div>
