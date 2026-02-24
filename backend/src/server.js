@@ -11,12 +11,14 @@ import http from 'http';
 import { Server } from 'socket.io';
 import { setupSocket } from './socket/socket.ts';
 
+dotenv.config();
+
 const app = express();
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: ['http://localhost:3000', 'https://online-chess-phi.vercel.app/'],
     credentials: true,
   }
 });
@@ -26,7 +28,7 @@ setupSocket(io);
 app.use(express.json());
 
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: ['http://localhost:3000', 'https://online-chess-phi.vercel.app/'],
   credentials: true
 }));
 
@@ -34,7 +36,7 @@ app.use(cookieParser());
 
 
 
-dotenv.config();
+
 
 connectDB();
 
