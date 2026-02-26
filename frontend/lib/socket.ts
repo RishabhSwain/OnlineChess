@@ -1,5 +1,9 @@
 import { io, Socket } from "socket.io-client"
 
+import { useGameStore } from "@/store/gameStore"
+
+const setOpponentPresent = useGameStore.getState().setOpponentPresent
+
 const SocketBackendURL = process.env.NEXT_PUBLIC_SOCKET_BACKEND_URL || "http://localhost:5000"
 
 export const socket: Socket = io(SocketBackendURL, {
@@ -13,5 +17,9 @@ socket.on("join-result", (success: boolean) => {
     // } else {
     //     alert("Failed to join the game.")
     // }
+})
+
+socket.on("start-game", () => {
+    setOpponentPresent(true)
 })
 
