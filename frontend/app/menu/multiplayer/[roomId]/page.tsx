@@ -202,7 +202,7 @@ export default function Game() {
         
         <div className="w-full md:w-2/3">
           <div className="m-auto w-full lg:w-3/4">
-            {/* <ChessboardComponent gameId={gameId} gameData={gameData} /> */}
+            <ChessboardComponent gameId={gameId} gameData={gameData} />
           </div>
         </div>
         <div className="w-full md:w-1/3">
