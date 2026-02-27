@@ -36,7 +36,7 @@ export default function Game() {
   const opponentPresent = useGameStore((s) => s.opponentPresent);
   const setOpponentPresent = useGameStore((s) => s.setOpponentPresent);
 
-  const [opponent, setOpponent] = useState<{ username: string } | null>(null);
+  const [opponent, setOpponent] = useState<string | null>(null);
 
   const copyLink = async () => {
     await navigator.clipboard.writeText(roomId as string);
@@ -206,7 +206,8 @@ export default function Game() {
           </div>
         </div>
         <div className="w-full md:w-1/3">
-          <ChatUI opponent={opponent} self={user?.username} />
+          <ChatUI opponent={opponent ?? ""} self={user?.username ?? ""} />
+
         </div>
       </div>
     </div>
