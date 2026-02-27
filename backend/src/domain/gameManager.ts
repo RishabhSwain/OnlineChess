@@ -33,7 +33,7 @@ export function handleMove(
     lastMove: result
   })
 } catch (error) {
-  console.error("Error making move:", error)
+  // console.error("Error making move:", error)
 
   socket.emit("invalid-move")
   return

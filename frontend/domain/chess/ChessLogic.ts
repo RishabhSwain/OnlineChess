@@ -8,11 +8,16 @@ class ChessGame {
   }
 
   makeMove(from: string, to: string) {
-    return this.game.move({
-      from,
-      to,
-      promotion: "q",
-    });
+    try{
+      return this.game.move({
+        from,
+        to,
+        promotion: "q",
+      });
+    } catch (error) {
+      console.error("Error making move:", error);
+      return null;
+    }
   }
 
   getFen() {

@@ -1,4 +1,11 @@
-export default function ChatUI() {
+import { use } from "react";
+
+type ChatUIProps = {
+  opponent: string;
+  self: string;
+};
+
+export default function ChatUI({ opponent, self }: ChatUIProps) {
   return (
     <div className="flex flex-col h-screen bg-zinc-950 text-zinc-200 border border-zinc-800 rounded-xl shadow-lg">
 
@@ -13,7 +20,7 @@ export default function ChatUI() {
         {/* Bot Message */}
         <div className="flex items-start gap-3">
           <div className="h-9 w-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
-            🤖
+            {opponent ? opponent[0].toUpperCase() : "O"}
           </div>
           <div className="bg-zinc-900 border border-zinc-800 p-3 rounded-xl shadow max-w-md">
             Welcome to the dark side. Ask me anything.
@@ -26,7 +33,7 @@ export default function ChatUI() {
             This UI looks sick.
           </div>
           <div className="h-9 w-9 bg-zinc-700 rounded-full flex items-center justify-center shadow">
-            U
+            {self ? self[0].toUpperCase() : "S"}
           </div>
         </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useState, useRef } from "react";
 import api from "@/lib/axios";
 import { useAuth } from "@/context/AuthContext";
 import { useParams, useRouter } from "next/navigation";
@@ -12,6 +12,8 @@ import { useGameStore } from "@/store/gameStore";
 import ChessboardComponent from "@/components/ChessboardComponent";
 import ChatUI from "@/components/ChatUI";
 import { AnimatePresence, motion } from "framer-motion";
+
+import { toast } from 'sonner';
 
 interface GameData {
   fen: string;
@@ -31,12 +33,20 @@ export default function Game() {
   const fen = useGameStore((s) => s.fen);
   const turn = useGameStore((s) => s.turn);
   const setTurn = useGameStore((s) => s.setTurn);
-  const opponent = useGameStore((s) => s.opponentPresent);
-  const setOpponent = useGameStore((s) => s.setOpponentPresent);
+  const opponentPresent = useGameStore((s) => s.opponentPresent);
+  const setOpponentPresent = useGameStore((s) => s.setOpponentPresent);
+
+  const [opponent, setOpponent] = useState<{ username: string } | null>(null);
 
   const copyLink = async () => {
     await navigator.clipboard.writeText(roomId as string);
-    alert("Code copied!");
+    toast.success("Code copied!");
+  };
+
+  const leaveRoom = async () => {
+    
+    api.post("/game/leave", { id: roomId });
+    router.replace("/menu/multiplayer/lobby");
   };
 
   useEffect(() => {
@@ -80,6 +90,24 @@ export default function Game() {
     }
   }, []);
 
+  const prevValueRef = useRef(opponentPresent);
+
+  useEffect(() => {
+    if (prevValueRef.current === opponentPresent) return;
+
+    // 🔥 Runs ONLY when value actually changes
+    // console.log("Opponent changed!", opponentPresent);
+
+    api
+      .post("/game/opponent", { roomId: roomId, userId: user?.username })
+      .then((res) => {
+        setOpponent(res.data.opponent);
+      });
+
+    prevValueRef.current = opponentPresent;
+  }, [opponentPresent]);
+
+
   if (roomExists === null) return <p className="text-white">Loading...</p>;
   if (!roomExists) return <p className="text-red-500">Room not found!</p>;
 
@@ -89,7 +117,7 @@ export default function Game() {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white p-6">
-      {opponent === false && (
+      {opponentPresent === false && (
         <AnimatePresence>
           <motion.div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md"
@@ -137,7 +165,7 @@ export default function Game() {
                 />
                 <button
                   onClick={copyLink}
-                  className="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded text-sm font-medium"
+                  className="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded text-sm font-medium cursor-pointer"
                 >
                   Copy
                 </button>
@@ -148,8 +176,8 @@ export default function Game() {
               </div>
 
               <button
-                // onClick={leaveRoom}
-                className="text-red-400 hover:text-red-300 text-sm mt-2"
+                onClick={leaveRoom}
+                className="text-red-400 hover:text-red-300 text-sm mt-2 cursor-pointer"
               >
                 Leave room
               </button>
@@ -171,13 +199,14 @@ export default function Game() {
       </div>
       {/* Main */}
       <div className="container mx-auto flex flex-col md:flex-row">
-        <div className="w-full md:w-1/3">
-          <ChatUI />
-        </div>
+        
         <div className="w-full md:w-2/3">
           <div className="m-auto w-full lg:w-3/4">
-            <ChessboardComponent gameId={gameId} gameData={gameData} />
+            {/* <ChessboardComponent gameId={gameId} gameData={gameData} /> */}
           </div>
+        </div>
+        <div className="w-full md:w-1/3">
+          <ChatUI opponent={opponent} self={user?.username} />
         </div>
       </div>
     </div>

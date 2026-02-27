@@ -131,3 +131,33 @@ export const makeMove = async (req, res) => {
     res.status(404).json({ error: "Game not found" });
   }
 };
+
+export const deleteRoom = async (req, res) => {
+  const { id } = req.body;
+  const game = await Game.findOne({ roomCode: id });
+  if (game) {
+    await Game.deleteOne({ roomCode: id });
+    res.json({ success: true });
+  } else {
+    res.status(404).json({ error: "Game not found" });
+  } 
+};
+
+export const getOpponent = async (req, res) => {
+  const { roomId, userId } = req.body;
+  const game = await Game.findOne({ roomCode: roomId });
+  if (game) {
+    if (game.players.length === 2) {
+      if (game.players[0].userId === userId) {
+        return res.json({ opponent: game.players[1].userId });
+      } else if (game.players[1].userId === userId) {
+        return res.json({ opponent: game.players[0].userId });
+      }
+      
+    } else {
+      res.status(404).json({ error: "Opponent not found" });
+    }
+  } else {
+    res.status(404).json({ error: "Game not found" });
+  }
+};
