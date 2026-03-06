@@ -23,6 +23,10 @@ export function setupSocket(io: Server) {
       handleMove(io, socket, gameId, move);
     });
 
+    socket.on("send-message", ({ gameId, content, sender }) => {
+      io.to(gameId).emit("receive-message", { content, sender });
+    });
+
     socket.on("disconnect", () => {
       console.log("Disconnected:", socket.id);
     });

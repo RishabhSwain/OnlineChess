@@ -21,6 +21,17 @@ interface GameData {
   state: any;
 }
 
+type Message = {
+  id: string;
+  sender: string;
+  content: string;
+  // timestamp: number;
+};
+
+type MessageListType = {
+  messages: Message[];
+};
+
 export default function Game() {
   const { user, loading, logout } = useAuth();
   const router = useRouter();
@@ -38,6 +49,8 @@ export default function Game() {
 
   const [opponent, setOpponent] = useState<string | null>(null);
 
+  const [messageList, setMessageList] = useState<MessageListType>({ messages: [] });
+
   const copyLink = async () => {
     await navigator.clipboard.writeText(roomId as string);
     toast.success("Code copied!");
@@ -48,6 +61,29 @@ export default function Game() {
     api.post("/game/leave", { id: roomId });
     router.replace("/menu/multiplayer/lobby");
   };
+
+  function sendMessage(content: string) {
+    socket.emit("send-message", { gameId: roomId, content, sender: user?.username || "self" });
+  }
+
+  useEffect(() => {
+    socket.on("receive-message", ({ content, sender }) => {
+      const newMessage: Message = {
+        id: Date.now().toString(),
+        sender: sender,
+        content,
+      };
+      setMessageList((prev) => ({
+        messages: [...prev.messages, newMessage],
+      }));
+    });
+
+      return () => {
+    socket.off("receive-message");
+  }; 
+    
+    
+  }, []);
 
   useEffect(() => {
     if (fen.split(" ")[1] === "b") {
@@ -206,7 +242,7 @@ export default function Game() {
           </div>
         </div>
         <div className="w-full md:w-1/3">
-          <ChatUI opponent={opponent ?? ""} self={user?.username ?? ""} />
+          <ChatUI opponent={opponent ?? ""} self={user?.username ?? ""} messages={messageList} sendMessage={sendMessage}/>
 
         </div>
       </div>
