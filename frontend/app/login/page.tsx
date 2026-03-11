@@ -81,7 +81,7 @@ export default function Login() {
             <button
               type="button"
               onClick={() => setShowPass(!showPass)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white transition"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white transition cursor-pointer"
             >
               {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
