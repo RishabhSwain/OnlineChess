@@ -9,7 +9,7 @@ export function proxy(req: NextRequest) {
   // public routes
   if (pathname.startsWith("/login") || pathname.startsWith("/signup")) {
     if (token) {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
+      return NextResponse.redirect(new URL("/menu", req.url));
     }
     return NextResponse.next();
   }
