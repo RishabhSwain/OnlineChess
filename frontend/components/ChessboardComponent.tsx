@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
-import { Chessboard, PieceDropHandlerArgs } from "react-chessboard";
+import { Chessboard, PieceDropHandlerArgs, PieceHandlerArgs } from "react-chessboard";
 import { chessGame } from "@/domain/chess/ChessLogic";
 
 import { useGameStore } from "@/store/gameStore";
 
 import { socket } from "@/lib/socket";
 import api from "@/lib/axios";
+
+import { toast } from "sonner";
 
 export default function ChessboardComponent({
   gameId,
@@ -40,7 +42,7 @@ export default function ChessboardComponent({
     };
 
     const handleInvalidMove = () => {
-      alert("Invalid move!");
+      toast.error("Invalid move!");
     };
 
     socket.on("game-state", handleGameState);
@@ -74,6 +76,12 @@ export default function ChessboardComponent({
     // return true;
   };
 
+  const canDragPiece = ({
+      piece
+    }: PieceHandlerArgs) => {
+      return piece.pieceType[0] === ownColor[0];
+    }
+
   const chessboardOptions = {
     darkSquareStyle: {
       backgroundColor: "lightBlue",
@@ -88,6 +96,7 @@ export default function ChessboardComponent({
       margin: "20px 0",
     },
     onPieceDrop,
+    canDragPiece,
     position: position,
     boardOrientation: ownColor,
   };
