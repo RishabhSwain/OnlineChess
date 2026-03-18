@@ -23,5 +23,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/menu/:path*", "/"], // paths to protect
+  matcher: ["/menu/:path*"], // paths to protect
 };
